@@ -36,16 +36,16 @@ body {
     color: #cbd5db;
     transition: ease-in 2s;
   }
-  
+
   .site-header .navbar-nav .nav-link:hover {
     color: #ffffff;
     transform: scale(1.1);
   }
-  
+
   .site-header .navbar-nav .nav-link.active {
     font-weight: 500;
   }
-  
+
 
   .content{
     background: #ffffff;
@@ -93,19 +93,19 @@ body {
     color: #428bca;
     text-decoration: none;
   }
-  
+
   .article-content {
     white-space: pre-line;
     font-weight: 500;
 
   }
-  
+
   .article-img {
     height: 65px;
     width: 65px;
     margin-right: 16px;
   }
-  
+
   .article-metadata {
     padding-bottom: 1px;
     margin-bottom: 4px;
@@ -118,7 +118,7 @@ body {
     color: #333;
     text-decoration: none;
   }
-  
+
   .article-svg {
     width: 25px;
     height: 25px;
@@ -149,4 +149,8 @@ body {
   }
   .site-header{
     background-color: #000b3a;
+  }
+
+  .list-group{
+    padding-left: 0px;
   }
