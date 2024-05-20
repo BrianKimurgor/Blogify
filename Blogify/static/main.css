@@ -1,3 +1,9 @@
+:root {
+  --primary: #0463FA;
+  --light: #EFF5FF;
+  --dark: #1B2C51;
+}
+
 body {
     background: rgb(255,255,255);
     background: linear-gradient(220deg, rgba(255,255,255,1) 0%, rgba(225,225,235,1) 58%, rgb(150, 204, 235) 100%);
@@ -13,56 +19,106 @@ body {
     background-color: #5f788a;
   }
 
+  .site-header .navbar-nav{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    font-weight: 500;
+  }
+  .site-header .navbar-brand{
+    font-weight: 700;
+    transition: ease-in 2s;
+  }
+  .site-header .navbar-brand:hover{
+    transform: scale(1.1);
+  }
   .site-header .navbar-nav .nav-link {
     color: #cbd5db;
+    transition: ease-in 2s;
   }
-
+  
   .site-header .navbar-nav .nav-link:hover {
     color: #ffffff;
+    transform: scale(1.1);
   }
-
+  
   .site-header .navbar-nav .nav-link.active {
     font-weight: 500;
   }
+  
 
-  .content-section {
+  .content{
     background: #ffffff;
-    padding: 10px 20px;
+    box-shadow: 0 4px 8px 8px rgba(48, 6, 237, 0.1);
     border: 1px solid #dddddd;
     border-radius: 3px;
     margin-bottom: 20px;
+    font-weight: 500;
+  }
+  .content .content-section{
+    max-width: 500px;
+    margin: 30px auto ;
+    flex: 1 0 auto;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 8px rgba(48, 6, 237, 0.1);
   }
 
+  .media{
+    background: #ffffff;
+    box-shadow: 0 4px 8px 8px rgba(48, 6, 237, 0.1);
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    padding: 10px 20px;
+}
+  .media{
+    width: 100%;
+    display: flex;
+  }
+  .media-body{
+    width: 100%;
+  }
   .article-title {
-    color: #444444;
+    color: black;
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-weight: 600;
   }
-
+  .article-title a{
+    text-decoration: none;
+  }
   a.article-title:hover {
     color: #428bca;
     text-decoration: none;
   }
-
+  
   .article-content {
     white-space: pre-line;
-  }
+    font-weight: 500;
 
+  }
+  
   .article-img {
     height: 65px;
     width: 65px;
     margin-right: 16px;
   }
-
+  
   .article-metadata {
     padding-bottom: 1px;
     margin-bottom: 4px;
-    border-bottom: 1px solid #e3e3e3
+    border-bottom: 1px solid #e3e3e3;
   }
-
+  .article-metadata a{
+    text-decoration: none;
+  }
   .article-metadata a:hover {
     color: #333;
     text-decoration: none;
   }
-
+  
   .article-svg {
     width: 25px;
     height: 25px;
