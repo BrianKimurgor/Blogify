@@ -1,9 +1,7 @@
 from flask import Flask, render_template, flash, redirect, url_for
+from Blogify import app
 from datetime import datetime
 
-#from flask_login import
-
-app = Flask(__name__)
 
 posts = [
     {
@@ -36,7 +34,11 @@ posts = [
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template('home.html', posts=posts)
+    return render_template('home.html')
+
+@app.route("/post")
+def blogPost():
+    return render_template('posts.html', posts=posts)
 
 
 @app.route("/about")
@@ -50,10 +52,4 @@ def register():
 
 @app.route("/login", methods=['GET', 'POST'] )
 def login():
-
-
-            return render_template('login.html', title='Login')
-
-
-if __name__ == '__main__':
-       app.run(debug=True)
+    return render_template('login.html', title='Login')
