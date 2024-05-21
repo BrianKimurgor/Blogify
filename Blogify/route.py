@@ -1,6 +1,10 @@
 from flask import Flask, render_template, flash, redirect, url_for
 from Blogify import app
 from datetime import datetime
+from Blogify.forms import RegistrationForm, LoginForm
+
+
+app.config['SECRET_KEY'] = '8c712967323ee4bbec8f02144f1373dd'
 
 
 posts = [
@@ -48,8 +52,12 @@ def about():
 
 @app.route("/register" ,methods=['GET', 'POST'] )
 def register():
-        return redirect(url_for('login'))
+        form = RegistrationForm()
+        if form.validate_on_submit():
+             flash(f'account crated for{form.username.data}!', 'success')
+        return render_template('register.html', form=form)
 
 @app.route("/login", methods=['GET', 'POST'] )
 def login():
-    return render_template('login.html', title='Login')
+    form = LoginForm()
+    return render_template('login.html', title='Login', form=form)
