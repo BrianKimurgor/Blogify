@@ -4,7 +4,7 @@ from datetime import datetime
 from Blogify.forms import RegistrationForm, LoginForm
 
 
-app.config['SECRET_KEY'] = '8c712967323ee4bbec8f02144f1373dd'
+
 
 
 posts = [
