@@ -1,1 +1,1 @@
-This is the reade for procedure
+This is the readme for procedure
