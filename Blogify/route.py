@@ -1,8 +1,6 @@
 import os
-import secrets
-from PIL import Image
-from flask import Flask, render_template, flash, redirect, url_for, request, abort
-from Blogify import app, db, bcrypt, login_manager
+from flask import Flask, render_template, flash, redirect, url_for, request, abort,  send_from_directory 
+from Blogify import app, db, bcrypt, login_manager, photos
 from datetime import datetime
 from Blogify.forms import RegistrationForm, LoginForm,  UpdateAccountForm, PostForm
 from Blogify.model import User, Post
@@ -10,11 +8,32 @@ from flask_login import login_user, current_user, logout_user, login_required
 
 
 
-
-
-
-
-
+posts = [
+    {
+        'author': 'Brian',
+        'title': 'Blog 1',
+        'content': 'First post',
+        'date_posted': 'April 20,2020'
+    },
+    {
+        'author': 'Brandon',
+        'title': 'Blog 2',
+        'content': 'Second post',
+        'date_posted': 'April 20,2021'
+    },
+    {
+        'author': 'Brian',
+        'title': 'Blog 1',
+        'content': 'First post',
+        'date_posted': 'April 20,2020'
+    },
+    {
+        'author': 'Brandon',
+        'title': 'Blog 2',
+        'content': 'Second post',
+        'date_posted': 'April 20,2021'
+    }
+]
 
 # posts = [
 #     {
@@ -97,46 +116,29 @@ def logout():
     return redirect(url_for('home'))
 
 
-# @app.route("/account")
-# @login_required
-# def account():
-#     return render_template('account.html', title='Account')
-
-
-def save_picture(form_picture):
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profile_pictures', picture_fn)
-
-    output_size = (125, 125)
-    i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)
-
-    return picture_fn
-
-
-@app.route("/account", methods=['GET', 'POST'])
+@app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
     form = UpdateAccountForm()
     if form.validate_on_submit():
         if form.picture.data:
-            picture_file = save_picture(form.picture.data)
-            current_user.image_file = picture_file
+            picture_file = photos.save(form.picture.data)
+            filename_url = url_for('upload_photo', filename=picture_file)
         current_user.username = form.username.data
         current_user.email = form.email.data
+        current_user.image_file = filename_url
         db.session.commit()
-        flash('Your account has been updated!', 'success')
+        flash('Account updated successfully!', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
-    image_file = url_for('static', filename='profile_pictures/' + current_user.image_file)
     return render_template('account.html', title='Account',
-                           image_file=image_file, form=form)
+                           form=form)
 
+@app.route('/uploads/photos/<filename>')
+def upload_photo(filename):
+    return send_from_directory(app.config['UPLOADED_PHOTOS_DEST'], filename)
 
 
 @app.route("/post/new", methods=['GET', 'POST'])
@@ -189,3 +191,15 @@ def delete_post(post_id):
     db.session.commit()
     flash('Your post has been deleted!', 'success')
     return redirect(url_for('home'))
+
+@app.route('/user/<string:username>')
+def user_post(username):
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=username)\
+        .first_or_404()
+    per_page = 2
+    posts = Post.query.filter_by(author=user)\
+        .order_by(Post.date_posted.desc())\
+        .paginate(page=page, per_page=per_page)
+    return render_template('user_post.html', posts=posts, user=user)
+

@@ -41,7 +41,7 @@
       </div>
     </div>
     <div class="header-hero">
-      <div class="hero-content">
+      <div class="blog-header">
         <h1>Blogify</h1>
         <h5>All news about blogify in one place</h5>
       </div>
@@ -51,25 +51,47 @@
   <!--Hero section-->
   <section class="hero">
     <h2>Popular Blogs</h2>
-    <div class="hero-container">
+    <div class="hero-content">
       {% for post in posts.items %}
-      <div class="row">
-        <div class="col">
-          <a class="article-title" href="{{ url_for('post', post_id=post.id) }}"><img
-              src="{{url_for('static', filename='images/pexels-duy-le-duc-1257907900-23948456.jpg')}}"></a>
-
-          <h5><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h5>
-          <p class="article-content">{{ post.content }}</p>
-          <div class="details">
-            <p>By <span>{{ post.author.username }}</span></p>
-            <small>Date <span>{{ post.date_posted.strftime('%Y-%m-%d') }}</span></small>
-          </div>
+      <div class="hero-container">
+          <div class="row">
+            <div class="col">
+                <a href="{{ url_for('post', post_id=post.id) }}"><img
+                    src="{{url_for('static', filename='images/pexels-duy-le-duc-1257907900-23948456.jpg')}}"></a>
+                <h5><a href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h5>
+                <p>{{ post.content }}</p>
+                <div class="details">
+                  <p>By <span>{{ post.author.username }}</span></p>
+                  <small>Date <span>{{ post.date_posted.strftime('%Y-%m-%d') }}</span></small>
+                </div>
+            </div>
         </div>
-        {%endfor%}
       </div>
+    {%endfor%}
     </div>
+    
 
   </section>
+
+  <section class="partners">
+    <div class="partners-container">
+      <h1>You Are In The Right Place</h1>
+      <p>Some of the best teams are already transforming their management</p>
+      <div class="partners-logos">
+        <div class="logo-row">
+          <img class="special" src="{{url_for('static', filename='images/airbnb.png')}}">
+          <img src="{{url_for('static', filename='images/google.png')}}">
+          <img class="special" src="{{url_for('static', filename='images/sony.png')}}">
+        </div>
+        <div class="logo-row">
+          <img src="{{url_for('static', filename='images/lya.jpg')}}">
+          <img class="special" src="{{url_for('static', filename='images/san.png')}}">
+          <img src="{{url_for('static', filename='images/uber.png')}}">
+        </div>
+      </div>
+    </div>
+  </section>
+  
 
   <!--scripts-->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
