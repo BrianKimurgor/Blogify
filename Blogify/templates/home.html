@@ -41,7 +41,7 @@
       </div>
     </div>
     <div class="header-hero">
-      <div class="hero-content">
+      <div class="blog-header">
         <h1>Blogify</h1>
         <h5>All news about blogify in one place</h5>
       </div>
@@ -51,23 +51,25 @@
   <!--Hero section-->
   <section class="hero">
     <h2>Popular Blogs</h2>
-    <div class="hero-container">
+    <div class="hero-content">
       {% for post in posts.items %}
-      <div class="row">
-        <div class="col">
-          <a class="article-title" href="{{ url_for('post', post_id=post.id) }}"><img
-              src="{{url_for('static', filename='images/pexels-duy-le-duc-1257907900-23948456.jpg')}}"></a>
-
-          <h5><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h5>
-          <p class="article-content">{{ post.content }}</p>
-          <div class="details">
-            <p>By <span>{{ post.author.username }}</span></p>
-            <small>Date <span>{{ post.date_posted.strftime('%Y-%m-%d') }}</span></small>
-          </div>
+      <div class="hero-container">
+          <div class="row">
+            <div class="col">
+                <a href="{{ url_for('post', post_id=post.id) }}"><img
+                    src="{{url_for('static', filename='images/pexels-duy-le-duc-1257907900-23948456.jpg')}}"></a>
+                <h5><a href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h5>
+                <p>{{ post.content }}</p>
+                <div class="details">
+                  <p>By <span>{{ post.author.username }}</span></p>
+                  <small>Date <span>{{ post.date_posted.strftime('%Y-%m-%d') }}</span></small>
+                </div>
+            </div>
         </div>
-        {%endfor%}
       </div>
+    {%endfor%}
     </div>
+    
 
   </section>
 
