@@ -132,6 +132,7 @@ body {
 .hero h2{
   text-align: center;
   margin-bottom: 40px;
+  font-weight: 600;
 }
 
 .hero-container{
@@ -144,10 +145,7 @@ body {
 
 .hero-container .row{
   cursor: pointer;
-}
-
-.hero-container .row:hover{
-  padding: 10px 20px;
+  padding: 7px;
   border-radius: 18px;
   box-shadow: 0 4px 8px 8px rgba(48, 6, 237, 0.1);
 }
@@ -304,3 +302,44 @@ a.article-title:hover {
 .bool{
   justify-content: space-between;
 }
+
+.partners{
+  margin: 50px auto;
+}
+
+.partners .partners-container{
+  max-width: 900px;
+  margin: 30px auto;
+  flex: 1 0 auto;
+}
+
+.partners-container h1{
+  font-weight: 700;
+}
+
+.partners-container h1,
+.partners-container p{
+  text-align: center;
+}
+
+.partners-logos{
+  margin: 30px auto;
+}
+
+.partners-logos .logo-row{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.logo-row img{
+  width: 200px;
+  object-fit: cover;
+}
+
+.special {
+  margin-top: 70px;
+}
+
