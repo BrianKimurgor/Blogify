@@ -1,5 +1,5 @@
 from datetime import datetime
-from Blogify import db, login_manager
+from Blogify import db, login_manager, serial
 from flask_login import UserMixin
 
 
@@ -15,6 +15,14 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
     posts = db.relationship('Post', backref='author', lazy=True)
+    
+    @staticmethod
+    def very_reset_token(token):
+        try:
+            email = serial.loads(token, salt='password-reset', max_age=3600)
+        except:
+            return None
+        return User.query.filter_by(email=email).first()
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"

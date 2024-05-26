@@ -77,6 +77,8 @@ class UpdateAccountForm(FlaskForm):
 
 class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
+    background_image = FileField('Background image for your post',
+                        validators=[FileAllowed(photos, 'Images only')])
     content = TextAreaField('Content', validators=[DataRequired()])
     submit = SubmitField('Post')
 
