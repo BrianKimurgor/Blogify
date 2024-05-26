@@ -1,77 +1,25 @@
 import os
 from flask import Flask, render_template, flash, redirect, url_for, request, abort,  send_from_directory 
-from Blogify import app, db, bcrypt, login_manager, photos
+from Blogify import app, db, bcrypt, login_manager, photos, serial, mail
 from datetime import datetime
-from Blogify.forms import RegistrationForm, LoginForm,  UpdateAccountForm, PostForm
+from Blogify.forms import (RegistrationForm, LoginForm,  UpdateAccountForm,
+                           PostForm, RequestResetForm, ResetPasswordForm)
 from Blogify.model import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_mail import Message
 
-
-
-posts = [
-    {
-        'author': 'Brian',
-        'title': 'Blog 1',
-        'content': 'First post',
-        'date_posted': 'April 20,2020'
-    },
-    {
-        'author': 'Brandon',
-        'title': 'Blog 2',
-        'content': 'Second post',
-        'date_posted': 'April 20,2021'
-    },
-    {
-        'author': 'Brian',
-        'title': 'Blog 1',
-        'content': 'First post',
-        'date_posted': 'April 20,2020'
-    },
-    {
-        'author': 'Brandon',
-        'title': 'Blog 2',
-        'content': 'Second post',
-        'date_posted': 'April 20,2021'
-    }
-]
-
-# posts = [
-#     {
-#         'author': 'Brian',
-#         'title': 'Blog 1',
-#         'content': 'First post',
-#         'date_posted': 'April 20,2020'
-#     },
-#     {
-#         'author': 'Brandon',
-#         'title': 'Blog 2',
-#         'content': 'Second post',
-#         'date_posted': 'April 20,2021'
-#     },
-#     {
-#         'author': 'Brian',
-#         'title': 'Blog 1',
-#         'content': 'First post',
-#         'date_posted': 'April 20,2020'
-#     },
-#     {
-#         'author': 'Brandon',
-#         'title': 'Blog 2',
-#         'content': 'Second post',
-#         'date_posted': 'April 20,2021'
-#     }
-# ]
 
 @app.route("/")
 @app.route("/home")
 def home():
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=5)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=3)
     return render_template('home.html', posts=posts)
 
 @app.route("/post")
 def blogPost():
-    posts = Post.query.all()
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=3)
     return render_template('posts.html', posts=posts)
 
 
@@ -146,7 +94,13 @@ def upload_photo(filename):
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(title=form.title.data, content=form.content.data, author=current_user)
+        if form.background_image.data:
+            picture_file = photos.save(form.background_image.data)
+            filename_url = url_for('upload_photo', filename=picture_file)
+        post = Post(title=form.title.data,
+                    content=form.content.data,
+                    image_file=filename_url,
+                    author=current_user)
         db.session.add(post)
         db.session.commit()
         flash('Your post has been created!', 'success')
@@ -169,8 +123,12 @@ def update_post(post_id):
         abort(403)
     form = PostForm()
     if form.validate_on_submit():
+        if form.background_image.data:
+            picture_file = photos.save(form.background_image.data)
+            filename_url = url_for('upload_photo', filename=picture_file)
         post.title = form.title.data
         post.content = form.content.data
+        post.image_file = filename_url
         db.session.commit()
         flash('Your post has been updated!', 'success')
         return redirect(url_for('post', post_id=post.id))
@@ -203,3 +161,45 @@ def user_post(username):
         .paginate(page=page, per_page=per_page)
     return render_template('user_post.html', posts=posts, user=user)
 
+def generate_reset_token(email):
+    return serial.dumps(email, salt='password-reset')
+
+def send_reset_email(email, reset_link):
+    msg = Message('Reset Password Link', sender='noreply@mosesomo.tech', recipients=[email])
+    msg.body = f'Please click the following link to reset your password: {reset_link}'
+    mail.send(msg)
+    token = serial.dumps(email, salt='password-reset')
+    return token
+
+@app.route("/reset_password", methods=['GET', 'POST'])
+def request_reset():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            token = generate_reset_token(user.email)
+            reset_link = url_for('request_token', token=token, _external=True)
+            send_reset_email(user.email, reset_link)
+            flash('An email has been sent with instructions to reset your password', 'info')
+        else:
+            flash('Email not found', 'warning')
+    return render_template('reset_request.html', title='Reset Password', form=form)
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def request_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    user = User.very_reset_token(token)
+    if user is None:
+        flash('That is an invalid token', 'warning')
+        return redirect(url_for('request_reset'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+        flash('Your password has been updated successfully!', 'success')
+        return redirect(url_for('login'))
+    return render_template('reset_password.html', title='Reset Password', form=form)
