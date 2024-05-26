@@ -56,10 +56,15 @@
       <div class="hero-container">
           <div class="row">
             <div class="col">
+              {% if post.image_file.startswith('images/') %}
                 <a href="{{ url_for('post', post_id=post.id) }}"><img
-                    src="{{url_for('static', filename='images/pexels-duy-le-duc-1257907900-23948456.jpg')}}"></a>
+                  src="{{ url_for('static', filename=post.image_file)}}" alt="image"></a>
+              {% else %}
+                <a href="{{ url_for('post', post_id=post.id) }}">
+                  <img src="{{ post.image_file }}">
+                </a>
+              {% endif %}
                 <h5><a href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h5>
-                <p>{{ post.content }}</p>
                 <div class="details">
                   <p>By <span>{{ post.author.username }}</span></p>
                   <small>Date <span>{{ post.date_posted.strftime('%Y-%m-%d') }}</span></small>
@@ -68,9 +73,18 @@
         </div>
       </div>
     {%endfor%}
-    </div>
-    
-
+  </div>
+    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+      {% if page_num %}
+        {% if posts.page == page_num %}
+          <a class="btn btn-info mb-4 text-center" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+        {% else %}
+            <a class="btn btn-outline-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+        {% endif %}
+      {% else %}
+        ...
+      {% endif %}
+    {% endfor %}
   </section>
 
   <section class="partners">
