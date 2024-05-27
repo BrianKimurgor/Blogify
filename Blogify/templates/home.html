@@ -77,9 +77,9 @@
     {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
       {% if page_num %}
         {% if posts.page == page_num %}
-          <a class="btn btn-info mb-4 text-center" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+          <a  class="btn btn-info mb-4 mt-4 text-center" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
         {% else %}
-            <a class="btn btn-outline-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+            <a  class="btn btn-outline-info mb-4 mt-4 text-center" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
         {% endif %}
       {% else %}
         ...
@@ -106,7 +106,13 @@
     </div>
   </section>
   
-
+  <section class="subscribe">
+    <div class="subscribe-container">
+      <h3>Get notified about our blogs published</h3>
+      <input type="text" placeholder="Your email address">
+      <button>Join us</button>
+    </div>
+  </section>
   <!--scripts-->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
     integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"

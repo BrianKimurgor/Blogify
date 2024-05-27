@@ -375,3 +375,18 @@ a.article-title:hover {
 .special {
   margin-top: 70px;
 }
+
+.subscribe{
+  margin: 50px auto;
+  padding: 15px;
+}
+
+.subscribe-container{
+    background: rgba(43, 77, 167, 1.0);
+    background: linear-gradient(135deg, rgba(43, 77, 167, 1.0), rgba(30, 134, 241, 1.0));
+    margin: 30px auto;
+    border-radius: 5px;
+    margin-bottom: 40px;
+    padding: 26px;
+    text-align: center;
+}
