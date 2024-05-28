@@ -1,9 +1,9 @@
 {% extends "main.html" %}
 {% block content %}
-    <h1 class="mb-3">Post by {{ user.username }} ({{ posts.total }})</h1>
+    <h1 class="mb-3 ">Post by {{ user.username }} ({{ posts.total }})</h1>
     {% for post in posts.items %}
     <article class="media content-section">
-      {% if post.author.image.startswith('profile/') %}
+      {% if post.author.image_file.startswith('profile/') %}
         <img class="rounded-circle article-img" src="{{ url_for('static', filename=post.author.image_file) }}">        {% else %}
         <img class="rounded-circle article-img" src="{{ post.author.image_file }}">
       {% endif %}
@@ -13,6 +13,7 @@
             <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y') }}</small>
           </div>
           <h2><a class="article-title text-decoration-none" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+          <img style="width: 100%; object-fit: cover; height: 206px;" src="{{ post.image_file }}" alt="">
           <p class="article-content">
             {% set too_long_threshold = 300 %}
             {% if post.content|length > too_long_threshold %}
@@ -25,16 +26,5 @@
           </p>
         </div>
       </article>
-    {% endfor %}
-    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-      {% if page_num %}
-        {% if posts.page == page_num %}
-          <a class="btn btn-info mb-4" href="{{ url_for('user_post', username=user.username, page=page_num) }}">{{ page_num }}</a>
-          {% else %}
-            {{ post.content }}
-            {% endif %}
-            </p>
-        </div>
-        </article>
     {% endfor %}
 {% endblock content %}                                                 
