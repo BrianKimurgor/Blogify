@@ -159,7 +159,7 @@ def user_post(username):
     posts = Post.query.filter_by(author=user)\
         .order_by(Post.date_posted.desc())\
         .paginate(page=page, per_page=per_page)
-    return render_template('user_post.html', posts=posts, user=user)
+    return render_template('users_post.html', posts=posts, user=user)
 
 def generate_reset_token(email):
     return serial.dumps(email, salt='password-reset')
