@@ -1,17 +1,104 @@
+#!/usr/bin/python3
+from Blogify import photos
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField,BooleanField
-from wtforms.validators import DataRequired, Length, Email
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, SubmitField, BooleanField, PasswordField, TextAreaField
+from wtforms.validators import DataRequired, Length, EqualTo, Email, ValidationError
+from Blogify.model import User, Post
+from flask_login import current_user
+
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password= PasswordField('Confirm password', validators=[DataRequired()])
-    submit = SubmitField('Sign Up')
+    username = StringField('Username',
+                           validators=[DataRequired(), Length(min=4, max=6)])
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    password = PasswordField('Password',
+                             validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(),
+                                                 EqualTo('password')])
+    submit = SubmitField('Sign up')
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user:
+            raise ValidationError('Username already taken.\
+                                  Please choose\
+                                  another username')
+
+    def validate_email(self, email):
+        email = User.query.filter_by(email=email.data).first()
+        if email:
+            raise ValidationError('Email already exists!')
+    
+    def validate_password(self, password_field):
+        password = password_field.data
+        # Check if password contains at least one uppercase letter, one lowercase letter, and one digit
+        if (not any(c.isupper() for c in password)
+            or not any(c.islower() for c in password)
+            or not any(c.isdigit() for c in password)):
+            raise ValidationError('Password must contain at least\
+                one uppercase letter, one lowercase letter, and one digit.')
 
 
 class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    password = PasswordField('Password',
+                             validators=[DataRequired()])
     remember = BooleanField('Remember me')
-    submit = SubmitField('Log in')
+    submit = SubmitField('Login')
+
+
+class UpdateAccountForm(FlaskForm):
+    username = StringField('Username',
+                           validators=[DataRequired(), Length(min=4, max=6)])
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    picture = FileField('Update profile picture',
+                        validators=[FileAllowed(photos, 'Images only')])
+    submit = SubmitField('Update')
+
+    def validate_username(self, username):
+        if username.data != current_user.username:
+            user = User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError('Username already taken.\
+                                  Please choose\
+                                  another username')
+
+    def validate_email(self, email):
+        if email.data != current_user.email:
+            email = User.query.filter_by(email=email.data).first()
+            if email:
+                raise ValidationError('Email already exists!')
+
+
+class PostForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    background_image = FileField('Background image for your post',
+                        validators=[FileAllowed(photos, 'Images only')])
+    content = TextAreaField('Content', validators=[DataRequired()])
+    submit = SubmitField('Post')
+
+
+class RequestResetForm(FlaskForm):
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('There is no account with\
+                                  that email, You must register first')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password',
+                             validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(),
+                                                 EqualTo('password')])
+    submit = SubmitField('Reset Password')
