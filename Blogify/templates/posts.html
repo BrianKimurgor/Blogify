@@ -13,6 +13,7 @@
             <small class="text-muted"><span class="text-dark">Date Posted:</span> {{ post.date_posted.strftime('%d-%m-%Y') }}</small>
           </div>
           <h2><a class="article-title text-decoration-none mb-0" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+          <img style="width: 100%; object-fit: cover; height: 206px;" src="{{ post.image_file }}" alt="">
           <p class="article-content">
             {% set too_long_threshold = 300 %}
             {% if post.content|length > too_long_threshold %}
