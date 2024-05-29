@@ -15,6 +15,9 @@
 ## Description
 Blogify is a dynamic and user-friendly blog platform designed to empower individuals to share their thoughts, experiences, and expertise with the world. With a sleek and intuitive interface, Blogify offers a seamless blogging experience for both novice and seasoned bloggers alike.
 
+## Project url
+https://blogify-ghre.onrender.com/
+
 ### Key Features
 - **Authentication:** Secure user authentication ensures each user has a personalized experience, safeguarding their content and interactions.
 - **Database Integration:** Utilizing SQLite for efficient storage and retrieval of blog data, ensuring seamless performance and reliability.
