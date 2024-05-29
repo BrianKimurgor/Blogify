@@ -72,9 +72,11 @@ def account():
         if form.picture.data:
             picture_file = photos.save(form.picture.data)
             filename_url = url_for('upload_photo', filename=picture_file)
-        current_user.username = form.username.data
-        current_user.email = form.email.data
-        current_user.image_file = filename_url
+            current_user.username = form.username.data
+            current_user.email = form.email.data
+            current_user.image_file = filename_url
+        else:
+            current_user.image_file = current_user.image_file
         db.session.commit()
         flash('Account updated successfully!', 'success')
         return redirect(url_for('account'))
