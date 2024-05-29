@@ -48,3 +48,26 @@ HTML, CSS, JavaScript, Python, Flask, Redis, SQLite, Gunicorn, Render
 - **Scalability and Performance:** Addressing potential scalability and performance challenges.
 - **Documentation and Maintenance:** Thoroughly documenting the project for future maintenance.
 - **Time Management:** Managing project timelines and unforeseen challenges effectively.
+
+## How to run it locally
+
+- **Clone the repository**
+    ```bash
+    git clone https://github.com/BrianKimurgor/Blogify.git
+    ```
+
+- **Navigate to the root directory and create a virtual environment**
+    ```bash
+    cd Blogify
+    python3 -m venv venv
+    ```
+
+- **Install the required dependencies from the file requirements.txt using pip**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+- **Run the application**
+    ```bash
+    python3 app.py
+    ```
