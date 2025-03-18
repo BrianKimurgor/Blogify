@@ -1,13 +1,32 @@
 import os
-from flask import Flask, render_template, flash, redirect, url_for, request, abort,  send_from_directory 
+from flask import Flask, render_template, flash, redirect, url_for, request, abort, send_from_directory, session
 from Blogify import app, db, bcrypt, login_manager, photos, serial, mail
 from datetime import datetime
-from Blogify.forms import (RegistrationForm, LoginForm,  UpdateAccountForm,
+from Blogify.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
                            PostForm, RequestResetForm, ResetPasswordForm)
 from Blogify.model import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
+from authlib.integrations.flask_client import OAuth
 
+# Configure Google OAuth
+oauth = OAuth(app)
+app.config['GOOGLE_CLIENT_ID'] = os.getenv("GOOGLE_CLIENT_ID")
+app.config['GOOGLE_CLIENT_SECRET'] = os.getenv("GOOGLE_CLIENT_SECRET")
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+app.config['OAUTHLIB_INSECURE_TRANSPORT'] = True  # Only for development
+
+google = oauth.register(
+    name='google',
+    client_id=app.config['GOOGLE_CLIENT_ID'],
+    client_secret=app.config['GOOGLE_CLIENT_SECRET'],
+    access_token_url='https://oauth2.googleapis.com/token',
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params={'scope': 'openid email profile'},
+    userinfo_endpoint='https://www.googleapis.com/oauth2/v3/userinfo',
+    client_kwargs={'scope': 'openid email profile'},
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+)
 
 @app.route("/")
 @app.route("/home")
@@ -16,19 +35,7 @@ def home():
     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=3)
     return render_template('home.html', posts=posts)
 
-@app.route("/post")
-def blogPost():
-    page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=3)
-    return render_template('posts.html', posts=posts)
-
-
-@app.route("/about")
-def about():
-    return render_template('about.html', title='About')
-
-
-@app.route("/register" ,methods=['GET', 'POST'] )
+@app.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -43,7 +50,7 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
-@app.route("/login", methods=['GET', 'POST'] )
+@app.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -58,10 +65,45 @@ def login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
 
+@app.route("/google_login")
+def google_login():
+    redirect_uri = url_for('google_callback', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+@app.route("/google_callback")
+def google_callback():
+    token = google.authorize_access_token()
+    user_info = user_info = google.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
+    email = user_info.get('email')
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        user = User(username=user_info.get('name'), email=email, password=bcrypt.generate_password_hash(os.urandom(16)).decode('utf-8'))
+        db.session.add(user)
+        db.session.commit()
+    login_user(user)
+    flash('Login successful!', 'success')
+    return redirect(url_for('home'))
+
 @app.route("/logout")
 def logout():
     logout_user()
+    session.clear()
     return redirect(url_for('home'))
+
+
+
+@app.route("/about")
+def about():
+    return render_template('about.html', title='About')
+
+
+
+@app.route("/post")
+def blogPost():
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=3)
+    return render_template('posts.html', posts=posts)
+
 
 
 @app.route('/account', methods=['GET', 'POST'])
