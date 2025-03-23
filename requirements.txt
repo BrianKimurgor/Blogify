@@ -1,4 +1,4 @@
-bcrypt
+4bcrypt
 blinker
 certifi
 cffi
@@ -27,3 +27,4 @@ typing_extensions
 Werkzeug
 WTForms
 authlib
+requests
