@@ -1,4 +1,4 @@
-4bcrypt
+bcrypt=4.3.0
 blinker
 certifi
 cffi
