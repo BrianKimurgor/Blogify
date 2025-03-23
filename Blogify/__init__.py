@@ -6,7 +6,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
 from itsdangerous import URLSafeTimedSerializer
-from authlib.integrations.flask_client import OAuth  # ✅ Use this for OAuth 2.0
+from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv  
 
 # Load environment variables

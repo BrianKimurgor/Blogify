@@ -27,5 +27,14 @@ SQLAlchemy
 typing_extensions
 Werkzeug
 WTForms
-authlib
-requests
+Authlib
+cachelib
+charset-normalize
+cryptography
+Flask-OAuthlib
+oauthlib
+packaging
+python-dotenv
+request
+requests-oauthlib
+urllib3
